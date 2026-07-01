@@ -36,6 +36,9 @@ export function Settings() {
   const [modalEntry, setModalEntry] = useState<ClipboardEntry | null>(null);
   const [copied, setCopied] = useState(false);
   const [copiedEntryId, setCopiedEntryId] = useState<string | null>(null);
+  const [loadError, setLoadError] = useState<string | null>(null);
+  const [apiKeySaved, setApiKeySaved] = useState(false);
+  const [apiKeySaveError, setApiKeySaveError] = useState<string | null>(null);
   const copyResetTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const listCopyResetTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const captureTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -47,22 +50,28 @@ export function Settings() {
   );
 
   const load = useCallback(async () => {
-    const [s, keySet, hk, entries] = await Promise.all([
-      invoke<AppSettings>("get_settings"),
-      invoke<boolean>("get_api_key_set"),
-      invoke<HotkeyStatus>("get_hotkey_status"),
-      invoke<ClipboardEntry[]>("get_clipboard_history"),
-    ]);
-    setSettings({
-      ...s,
-      dictationMode: s.dictationMode === "english" ? "english" : "native",
-    });
-    setApiKeySet(keySet);
-    setHotkeyStatus(hk);
-    setHistory(entries);
-    setApiKeyInput("");
-    setApiKeyDirty(false);
-    setShowApiKey(false);
+    setLoadError(null);
+    try {
+      const [s, keySet, hk, entries] = await Promise.all([
+        invoke<AppSettings>("get_settings"),
+        invoke<boolean>("get_api_key_set"),
+        invoke<HotkeyStatus>("get_hotkey_status"),
+        invoke<ClipboardEntry[]>("get_clipboard_history"),
+      ]);
+      setSettings({
+        ...s,
+        dictationMode: s.dictationMode === "english" ? "english" : "native",
+      });
+      setApiKeySet(keySet);
+      setHotkeyStatus(hk);
+      setHistory(entries);
+      setApiKeyInput("");
+      setApiKeyDirty(false);
+      setShowApiKey(false);
+    } catch (err) {
+      const message = err instanceof Error ? err.message : String(err);
+      setLoadError(message || "Failed to load settings");
+    }
   }, []);
 
   useEffect(() => {
@@ -74,6 +83,14 @@ export function Settings() {
     listen<ClipboardEntry>("clipboard-history-updated", (e) => {
       setHistory((prev) => [e.payload, ...prev.filter((h) => h.id !== e.payload.id)]);
     }).then((u) => unsubs.push(u));
+
+    const window = getCurrentWindow();
+    window
+      .onFocusChanged(({ payload: focused }) => {
+        if (focused) load();
+      })
+      .then((u) => unsubs.push(u));
+
     return () => unsubs.forEach((u) => u());
   }, [load]);
 
@@ -139,10 +156,23 @@ export function Settings() {
   const saveApiKey = useCallback(async (value: string) => {
     const trimmed = value.trim();
     if (!trimmed) return;
-    await invoke("set_api_key", { key: trimmed });
-    setApiKeySet(true);
-    setApiKeyDirty(false);
-    setShowApiKey(false);
+    setApiKeySaveError(null);
+    try {
+      await invoke("set_api_key", { key: trimmed });
+      const saved = await invoke<boolean>("get_api_key_set");
+      if (!saved) {
+        throw new Error("Key was not stored in the OS credential manager.");
+      }
+      setApiKeySet(true);
+      setApiKeyDirty(false);
+      setShowApiKey(false);
+      setApiKeyInput("");
+      setApiKeySaved(true);
+      window.setTimeout(() => setApiKeySaved(false), 2000);
+    } catch (err) {
+      const message = err instanceof Error ? err.message : String(err);
+      setApiKeySaveError(message || "Failed to save API key");
+    }
   }, []);
 
   const revealApiKey = useCallback(async () => {
@@ -240,7 +270,20 @@ export function Settings() {
   }, [capturingHotkey, isMac, cancelHotkeyCapture, commitHotkey]);
 
   if (!settings) {
-    return <div className="settings-loading">Loading…</div>;
+    return (
+      <div className="settings-loading">
+        {loadError ? (
+          <>
+            <div className="settings-load-error">{loadError}</div>
+            <button type="button" className="settings-retry-btn" onClick={load}>
+              Retry
+            </button>
+          </>
+        ) : (
+          "Loading…"
+        )}
+      </div>
+    );
   }
 
   const keycaps = capturingHotkey && pendingHotkey
@@ -402,8 +445,15 @@ export function Settings() {
             </div>
             <div className="settings-helper-text">
               <LockIcon />
-              Stored locally, never shared
+              {apiKeySaved
+                ? "Saved locally — verified"
+                : "Stored locally, never shared"}
             </div>
+            {apiKeySaveError && (
+              <div className="settings-field-desc settings-field-desc--error">
+                {apiKeySaveError}
+              </div>
+            )}
           </div>
         </div>
       </div>

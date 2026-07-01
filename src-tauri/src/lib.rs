@@ -13,7 +13,7 @@ pub mod tray;
 
 use std::sync::{Arc, Mutex};
 
-use tauri::Manager;
+use tauri::{Manager, WindowEvent};
 use tracing_subscriber::EnvFilter;
 
 use crate::config::ConfigStore;
@@ -89,6 +89,20 @@ pub fn run() {
             }
 
             Ok(())
+        })
+        .on_window_event(|window, event| {
+            if window.label() != "settings" {
+                return;
+            }
+
+            if let WindowEvent::CloseRequested { api, .. } = event {
+                api.prevent_close();
+                let app = window.app_handle();
+                if let Err(e) = crate::hotkey::ensure_hotkey_registered(&app) {
+                    tracing::warn!("Failed to restore hotkey when hiding settings: {e}");
+                }
+                let _ = window.hide();
+            }
         })
         .invoke_handler(tauri::generate_handler![
             commands::get_settings,

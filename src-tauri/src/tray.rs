@@ -23,6 +23,10 @@ pub fn setup_tray(app: &App) -> Result<(), Box<dyn std::error::Error>> {
                 if let Some(window) = app.get_webview_window("settings") {
                     let _ = window.show();
                     let _ = window.set_focus();
+                    let _ = window.center();
+                    if let Err(e) = crate::hotkey::ensure_hotkey_registered(app) {
+                        tracing::warn!("Failed to ensure hotkey on settings open: {e}");
+                    }
                 }
             }
             "quit" => {

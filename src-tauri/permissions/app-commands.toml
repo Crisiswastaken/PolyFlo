@@ -1,0 +1,19 @@
+[[permission]]
+identifier = "allow-app-commands"
+description = "Allow Polyflo settings and dictation commands from the webview."
+commands.allow = [
+  "get_settings",
+  "save_settings",
+  "get_api_key_set",
+  "get_api_key",
+  "set_api_key",
+  "clear_api_key",
+  "get_clipboard_history",
+  "test_mic",
+  "get_hotkey_status",
+  "pause_hotkey",
+  "resume_hotkey",
+  "get_platform_info",
+  "check_accessibility_permission",
+  "request_accessibility_permission",
+]

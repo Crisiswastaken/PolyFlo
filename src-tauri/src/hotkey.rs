@@ -92,3 +92,20 @@ pub fn get_hotkey_registered(app: &AppHandle) -> bool {
         .map(|s| *s.hotkey_registered.lock().unwrap())
         .unwrap_or(false)
 }
+
+/// Re-register the hotkey if it was paused (e.g. during hotkey capture) or lost.
+pub fn ensure_hotkey_registered(app: &AppHandle) -> Result<(), String> {
+    if get_hotkey_registered(app) {
+        return Ok(());
+    }
+
+    let settings = app
+        .try_state::<AppState>()
+        .ok_or_else(|| "App state unavailable".to_string())?
+        .config
+        .lock()
+        .unwrap()
+        .get();
+
+    register_hotkey_internal(app, &settings.hotkey)
+}

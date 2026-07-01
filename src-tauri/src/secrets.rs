@@ -1,14 +1,9 @@
 const SERVICE: &str = "polyflo";
+const LEGACY_SERVICE: &str = "voice-dictation";
 const USER: &str = "sarvam";
 
-pub fn get_api_key() -> Result<Option<String>, String> {
-    if let Ok(key) = std::env::var("SARVAM_API_KEY") {
-        if !key.is_empty() {
-            return Ok(Some(key));
-        }
-    }
-
-    match keyring::Entry::new(SERVICE, USER) {
+fn read_keyring(service: &str) -> Result<Option<String>, String> {
+    match keyring::Entry::new(service, USER) {
         Ok(entry) => match entry.get_password() {
             Ok(key) if !key.is_empty() => Ok(Some(key)),
             Ok(_) => Ok(None),
@@ -17,6 +12,27 @@ pub fn get_api_key() -> Result<Option<String>, String> {
         },
         Err(e) => Err(e.to_string()),
     }
+}
+
+pub fn get_api_key() -> Result<Option<String>, String> {
+    if let Ok(key) = std::env::var("SARVAM_API_KEY") {
+        if !key.is_empty() {
+            return Ok(Some(key));
+        }
+    }
+
+    if let Some(key) = read_keyring(SERVICE)? {
+        return Ok(Some(key));
+    }
+
+    // Migrate keys saved under the pre-Polyflo service name.
+    if let Some(key) = read_keyring(LEGACY_SERVICE)? {
+        let _ = set_api_key(&key);
+        let _ = keyring::Entry::new(LEGACY_SERVICE, USER).and_then(|e| e.delete_credential());
+        return Ok(Some(key));
+    }
+
+    Ok(None)
 }
 
 pub fn set_api_key(key: &str) -> Result<(), String> {

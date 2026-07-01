@@ -1,6 +1,6 @@
 [package]
 name = "polyflo"
-version = "1.0.0"
+version = "1.0.1"
 description = "Polyflo — minimal push-to-talk dictation powered by Sarvam"
 authors = ["Vince"]
 edition = "2021"
