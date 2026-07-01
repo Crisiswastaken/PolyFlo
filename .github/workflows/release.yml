@@ -16,10 +16,13 @@ jobs:
         include:
           - platform: macos-latest
             args: --target aarch64-apple-darwin
+            rust_target: aarch64-apple-darwin
           - platform: macos-latest
             args: --target x86_64-apple-darwin
+            rust_target: x86_64-apple-darwin
           - platform: windows-latest
             args: ""
+            rust_target: ""
 
     runs-on: ${{ matrix.platform }}
 
@@ -35,6 +38,10 @@ jobs:
 
       - name: Install Rust stable
         uses: dtolnay/rust-toolchain@stable
+
+      - name: Add Rust target
+        if: matrix.rust_target != ''
+        run: rustup target add ${{ matrix.rust_target }}
 
       - name: Install frontend dependencies
         run: npm ci

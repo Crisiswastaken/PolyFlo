@@ -18,7 +18,7 @@ pub fn capture_target_window() {
 
     #[cfg(target_os = "macos")]
     {
-        let _ = SAVED_TARGET.lock();
+        let _guard = SAVED_TARGET.lock();
     }
 }
 

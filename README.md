@@ -30,7 +30,7 @@ Saaras v3 supports [23 languages](https://docs.sarvam.ai/api-reference-docs/gett
 
 ### Option A — Download a release (recommended)
 
-1. Go to **[Releases](https://github.com/Crisiswastaken/vox/releases)** on GitHub.
+1. Go to **[Releases](https://github.com/Crisiswastaken/PolyFlo/releases)** on GitHub.
 2. Download the installer for your platform:
    - **Windows:** `Polyflo_*_x64-setup.exe` (NSIS installer)
    - **macOS (Apple Silicon):** `Polyflo_*_aarch64.dmg`
@@ -61,8 +61,8 @@ Saaras v3 supports [23 languages](https://docs.sarvam.ai/api-reference-docs/gett
 - **Accessibility** permission for auto-paste (System Settings → Privacy & Security → Accessibility)
 
 ```bash
-git clone https://github.com/Crisiswastaken/vox.git
-cd vox
+git clone https://github.com/Crisiswastaken/PolyFlo.git
+cd PolyFlo
 npm install
 ```
 
