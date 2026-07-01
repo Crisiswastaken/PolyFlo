@@ -47,6 +47,14 @@ jobs:
           tagName: ${{ github.ref_name }}
           releaseName: Polyflo ${{ github.ref_name }}
           releaseBody: |
+            ## Polyflo ${{ github.ref_name }}
+
+            ### Fixes in v1.0.1
+            - Fix settings stuck on "Loading…" in production builds (missing Tauri IPC permissions)
+            - Fix settings window not reopening after close (hide instead of destroy)
+            - Fix API key save and verify persistence in OS credential manager
+            - Restore hotkey after closing settings or cancelling hotkey capture
+
             See the [README](https://github.com/${{ github.repository }}#install) for setup instructions.
 
             **Windows:** run the `.exe` installer from the assets below.
