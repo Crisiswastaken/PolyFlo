@@ -3,6 +3,7 @@ node_modules/
 
 # Build output
 dist/
+*.exe
 
 # Environment and secrets
 .env
