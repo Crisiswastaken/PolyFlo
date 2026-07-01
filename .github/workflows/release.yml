@@ -56,11 +56,10 @@ jobs:
           releaseBody: |
             ## Polyflo ${{ github.ref_name }}
 
-            ### Fixes in v1.0.1
-            - Fix settings stuck on "Loading…" in production builds (missing Tauri IPC permissions)
-            - Fix settings window not reopening after close (hide instead of destroy)
-            - Fix API key save and verify persistence in OS credential manager
-            - Restore hotkey after closing settings or cancelling hotkey capture
+            ### Fixes in v1.0.2
+            - Fix API key not persisting on Windows (enable Windows Credential Manager backend)
+            - Fix hotkeys appearing dead when API key was missing (now shows a notification)
+            - Fix duplicate password reveal icon in API key field on Windows
 
             See the [README](https://github.com/${{ github.repository }}#install) for setup instructions.
 

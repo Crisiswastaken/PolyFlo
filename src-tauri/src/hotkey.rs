@@ -2,6 +2,7 @@ use std::sync::Arc;
 
 use tauri::{App, AppHandle, Manager};
 use tauri_plugin_global_shortcut::{GlobalShortcutExt, Shortcut, ShortcutState};
+use tauri_plugin_notification::NotificationExt;
 
 use crate::events::emit_hotkey_status;
 use crate::session::SessionState;
@@ -65,7 +66,11 @@ async fn handle_hotkey_event(app: &AppHandle, state: ShortcutState) {
             let mut guard = session.lock().await;
             if *guard.state() == SessionState::Idle {
                 if let Err(e) = guard.start(settings).await {
+                    tracing::warn!("Hotkey session start failed: {e}");
                     crate::events::emit_error(app, "session_start_failed", &e);
+                    if e.contains("API key") {
+                        crate::hotkey::notify_hotkey_blocked(app, &e);
+                    }
                 }
             }
         }
@@ -108,4 +113,13 @@ pub fn ensure_hotkey_registered(app: &AppHandle) -> Result<(), String> {
         .get();
 
     register_hotkey_internal(app, &settings.hotkey)
+}
+
+pub fn notify_hotkey_blocked(app: &AppHandle, message: &str) {
+    let _ = app
+        .notification()
+        .builder()
+        .title("Polyflo")
+        .body(message)
+        .show();
 }

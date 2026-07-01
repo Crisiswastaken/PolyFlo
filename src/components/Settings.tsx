@@ -149,6 +149,11 @@ export function Settings() {
       const next = { ...current, hotkey };
       setSettings(next);
       await save(next);
+      try {
+        await invoke("resume_hotkey");
+      } catch {
+        /* save_settings already re-registers when hotkey changes */
+      }
     },
     [save],
   );
@@ -159,10 +164,6 @@ export function Settings() {
     setApiKeySaveError(null);
     try {
       await invoke("set_api_key", { key: trimmed });
-      const saved = await invoke<boolean>("get_api_key_set");
-      if (!saved) {
-        throw new Error("Key was not stored in the OS credential manager.");
-      }
       setApiKeySet(true);
       setApiKeyDirty(false);
       setShowApiKey(false);
@@ -423,6 +424,8 @@ export function Settings() {
                 type={apiInputType}
                 placeholder={apiPlaceholder}
                 value={apiValue}
+                autoComplete="off"
+                spellCheck={false}
                 onChange={(e) => {
                   setApiKeyInput(e.target.value);
                   setApiKeyDirty(true);

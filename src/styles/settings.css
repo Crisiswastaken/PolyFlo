@@ -428,6 +428,12 @@ body,
   background: #ffffff;
 }
 
+/* Hide WebView2 / Edge native password reveal (we provide our own toggle). */
+.settings-api-input::-ms-reveal,
+.settings-api-input::-ms-clear {
+  display: none;
+}
+
 .settings-eye-btn {
   position: absolute;
   right: 6px;
