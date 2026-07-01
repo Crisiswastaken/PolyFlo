@@ -1,0 +1,397 @@
+:root {
+  --color-bg: #0a0a0a;
+  --color-surface: #141414;
+  --color-surface-elevated: #1c1c1c;
+  --color-border: rgba(255, 255, 255, 0.08);
+  --color-text: #f5f5f5;
+  --color-text-muted: rgba(245, 245, 245, 0.45);
+  --color-accent: #ffffff;
+  --color-accent-dim: rgba(255, 255, 255, 0.12);
+  --color-error: #ff6b6b;
+  --color-success: #7dffb3;
+  --font-display: "Segoe UI", system-ui, -apple-system, sans-serif;
+  --font-body: system-ui, -apple-system, "Segoe UI", sans-serif;
+  --space-xs: 4px;
+  --space-sm: 8px;
+  --space-md: 16px;
+  --space-lg: 24px;
+  --radius-sm: 6px;
+  --radius-md: 12px;
+  --radius-full: 999px;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  background: transparent;
+}
+
+body {
+  font-family: var(--font-body);
+  font-size: 14px;
+  color: var(--color-text);
+  -webkit-font-smoothing: antialiased;
+}
+
+button,
+input {
+  font: inherit;
+}
+
+/* ── Settings app ── */
+
+.vox-app {
+  min-height: 100vh;
+  padding: var(--space-lg);
+  background: var(--color-bg);
+}
+
+.vox-header {
+  margin-bottom: var(--space-lg);
+}
+
+.vox-title {
+  font-family: var(--font-display);
+  font-size: 28px;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  margin: 0 0 var(--space-xs);
+}
+
+.vox-tagline {
+  margin: 0;
+  color: var(--color-text-muted);
+  font-size: 13px;
+}
+
+.vox-section {
+  margin-bottom: var(--space-lg);
+  padding-bottom: var(--space-lg);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.vox-section:last-child {
+  border-bottom: none;
+}
+
+.vox-section-title {
+  font-family: var(--font-display);
+  font-size: 11px;
+  font-weight: 400;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+  margin: 0 0 var(--space-md);
+}
+
+.vox-section-desc {
+  margin: 0 0 var(--space-md);
+  font-size: 12px;
+}
+
+.vox-muted {
+  color: var(--color-text-muted);
+}
+
+.vox-toast {
+  font-size: 12px;
+  color: var(--color-success);
+  margin: 0 0 var(--space-md);
+}
+
+.vox-ok {
+  font-size: 12px;
+  color: var(--color-success);
+  margin: var(--space-sm) 0 0;
+}
+
+.vox-error {
+  font-size: 12px;
+  color: var(--color-error);
+  margin: var(--space-sm) 0 0;
+}
+
+.field {
+  margin-bottom: var(--space-sm);
+}
+
+.row {
+  display: flex;
+  gap: var(--space-sm);
+  align-items: center;
+}
+
+input {
+  flex: 1;
+  background: var(--color-surface);
+  color: var(--color-text);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  padding: 10px 12px;
+  width: 100%;
+  outline: none;
+  transition: border-color 0.15s;
+}
+
+input:focus {
+  border-color: rgba(255, 255, 255, 0.25);
+}
+
+.vox-btn {
+  cursor: pointer;
+  background: var(--color-accent);
+  color: var(--color-bg);
+  border: none;
+  border-radius: var(--radius-sm);
+  padding: 10px 16px;
+  font-size: 13px;
+  font-weight: 500;
+  white-space: nowrap;
+  transition: opacity 0.15s;
+}
+
+.vox-btn:hover {
+  opacity: 0.88;
+}
+
+.vox-btn--ghost {
+  background: transparent;
+  color: var(--color-text);
+  border: 1px solid var(--color-border);
+}
+
+/* ── Split-flap mode board ── */
+
+.split-flap__board {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2px;
+  background: var(--color-border);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  border: 1px solid var(--color-border);
+}
+
+.split-flap__cell {
+  cursor: pointer;
+  background: var(--color-surface);
+  border: none;
+  padding: 20px 12px;
+  transition: background 0.2s, transform 0.15s;
+  position: relative;
+  overflow: hidden;
+}
+
+.split-flap__cell::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.04) 0%,
+    transparent 48%,
+    rgba(0, 0, 0, 0.15) 52%,
+    rgba(0, 0, 0, 0.25) 100%
+  );
+  pointer-events: none;
+}
+
+.split-flap__cell--active {
+  background: var(--color-surface-elevated);
+}
+
+.split-flap__cell--active .split-flap__label {
+  color: var(--color-accent);
+}
+
+.split-flap__label {
+  font-family: var(--font-display);
+  font-size: 13px;
+  letter-spacing: 0.12em;
+  color: var(--color-text-muted);
+  position: relative;
+  z-index: 1;
+  transition: color 0.2s;
+}
+
+.split-flap__hint {
+  margin: var(--space-sm) 0 0;
+  font-size: 12px;
+  color: var(--color-text-muted);
+}
+
+/* ── Overlay sphere ── */
+
+html.overlay-page,
+html.overlay-page body,
+html.overlay-page #root {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  background: transparent !important;
+  background-color: transparent !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+}
+
+.vox-sphere {
+  width: 8px;
+  height: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition:
+    width 0.42s cubic-bezier(0.34, 1.15, 0.64, 1),
+    height 0.42s cubic-bezier(0.34, 1.15, 0.64, 1);
+}
+
+.vox-sphere--listening,
+.vox-sphere--processing {
+  width: 48px;
+  height: 48px;
+}
+
+.vox-sphere__shell {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.5);
+  transition:
+    background 0.35s ease,
+    box-shadow 0.35s ease,
+    border-color 0.35s ease;
+}
+
+.vox-sphere--listening .vox-sphere__shell,
+.vox-sphere--processing .vox-sphere__shell {
+  background: rgba(12, 12, 12, 0.88);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  box-shadow:
+    0 4px 16px rgba(0, 0, 0, 0.35),
+    inset 0 1px 0 rgba(255, 255, 255, 0.07);
+}
+
+.vox-sphere__content {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transform: scale(0.6);
+  transition:
+    opacity 0.28s ease,
+    transform 0.32s cubic-bezier(0.34, 1.1, 0.64, 1);
+}
+
+.vox-sphere__panel {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transform: scale(0.85);
+  transition:
+    opacity 0.22s ease,
+    transform 0.28s cubic-bezier(0.34, 1.1, 0.64, 1);
+  pointer-events: none;
+}
+
+.vox-sphere__panel--visible {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.vox-sphere--listening .vox-sphere__content,
+.vox-sphere--processing .vox-sphere__content {
+  opacity: 1;
+  transform: scale(1);
+  transition-delay: 0.1s;
+}
+
+.vox-sphere--idle .vox-sphere__content {
+  pointer-events: none;
+}
+
+.audio-wave {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  height: 26px;
+}
+
+.audio-wave__bar {
+  display: block;
+  width: 2px;
+  min-height: 3px;
+  border-radius: 1px;
+  background: rgba(255, 255, 255, 0.95);
+  flex-shrink: 0;
+}
+
+.overlay-loader {
+  width: 22px;
+  height: 22px;
+}
+
+.overlay-loader__svg {
+  width: 100%;
+  height: 100%;
+  animation: overlay-loader-spin 1.1s linear infinite;
+}
+
+.overlay-loader__track {
+  stroke: rgba(255, 255, 255, 0.12);
+  stroke-width: 2;
+}
+
+.overlay-loader__arc {
+  stroke: rgba(255, 255, 255, 0.88);
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-dasharray: 14 36;
+  stroke-dashoffset: 0;
+  transform-origin: center;
+  animation: overlay-loader-dash 1.1s ease-in-out infinite;
+}
+
+@keyframes overlay-loader-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes overlay-loader-dash {
+  0% {
+    stroke-dasharray: 4 46;
+    stroke-dashoffset: 0;
+  }
+  50% {
+    stroke-dasharray: 22 28;
+    stroke-dashoffset: -8;
+  }
+  100% {
+    stroke-dasharray: 4 46;
+    stroke-dashoffset: -50;
+  }
+}
