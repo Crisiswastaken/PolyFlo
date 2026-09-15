@@ -58,6 +58,16 @@ impl HistoryStore {
         entry
     }
 
+    pub fn remove(&mut self, id: &str) -> Result<(), String> {
+        self.entries.retain(|entry| entry.id != id);
+        self.save()
+    }
+
+    pub fn clear(&mut self) -> Result<(), String> {
+        self.entries.clear();
+        self.save()
+    }
+
     fn save(&self) -> Result<(), String> {
         let data = serde_json::to_string_pretty(&self.entries).map_err(|e| e.to_string())?;
         std::fs::write(&self.store_path, data).map_err(|e| e.to_string())

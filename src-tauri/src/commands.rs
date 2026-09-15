@@ -52,6 +52,16 @@ pub fn get_clipboard_history(state: State<'_, AppState>) -> Vec<HistoryEntry> {
 }
 
 #[tauri::command]
+pub fn remove_clipboard_entry(state: State<'_, AppState>, id: String) -> Result<(), String> {
+    state.history.lock().unwrap().remove(&id)
+}
+
+#[tauri::command]
+pub fn clear_clipboard_history(state: State<'_, AppState>) -> Result<(), String> {
+    state.history.lock().unwrap().clear()
+}
+
+#[tauri::command]
 pub fn set_api_key(key: String) -> Result<(), String> {
     secrets::set_api_key(key.trim())
 }

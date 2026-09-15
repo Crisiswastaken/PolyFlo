@@ -14,6 +14,7 @@ import {
   CheckIcon,
   CloseIcon,
   CopyIcon,
+  DeleteIcon,
   EyeIcon,
   EyeOffIcon,
   GlobeIcon,
@@ -236,6 +237,30 @@ export function Settings() {
     [],
   );
 
+  const removeHistoryEntry = useCallback(
+    async (entry: ClipboardEntry, e: React.MouseEvent) => {
+      e.stopPropagation();
+      try {
+        await invoke("remove_clipboard_entry", { id: entry.id });
+        setHistory((prev) => prev.filter((item) => item.id !== entry.id));
+        setModalEntry((current) => (current?.id === entry.id ? null : current));
+      } catch {
+        /* history persist failed */
+      }
+    },
+    [],
+  );
+
+  const clearHistory = useCallback(async () => {
+    try {
+      await invoke("clear_clipboard_history");
+      setHistory([]);
+      setModalEntry(null);
+    } catch {
+      /* history persist failed */
+    }
+  }, []);
+
   useEffect(() => {
     if (!modalEntry) return;
     const onKey = (e: KeyboardEvent) => {
@@ -340,7 +365,18 @@ export function Settings() {
           </div>
 
           <div className="settings-field settings-field--clipboard">
-            <div className="settings-field-label">Clipboard</div>
+            <div className="settings-field-label-row">
+              <div className="settings-field-label">Clipboard</div>
+              {history.length > 0 && (
+                <button
+                  type="button"
+                  className="settings-clear-btn"
+                  onClick={clearHistory}
+                >
+                  Clear
+                </button>
+              )}
+            </div>
             <div className="settings-history-box">
               {history.length === 0 ? (
                 <div className="settings-history-empty">No transcripts yet</div>
@@ -365,14 +401,24 @@ export function Settings() {
                         {formatHistoryTime(entry.timestamp)}
                       </div>
                     </div>
-                    <button
-                      type="button"
-                      className={`settings-history-copy-btn${copiedEntryId === entry.id ? " copied" : ""}`}
-                      aria-label={copiedEntryId === entry.id ? "Copied" : "Copy to clipboard"}
-                      onClick={(e) => copyHistoryEntry(entry, e)}
-                    >
-                      {copiedEntryId === entry.id ? <CheckIcon /> : <CopyIcon />}
-                    </button>
+                    <div className="settings-history-actions">
+                      <button
+                        type="button"
+                        className={`settings-history-copy-btn${copiedEntryId === entry.id ? " copied" : ""}`}
+                        aria-label={copiedEntryId === entry.id ? "Copied" : "Copy to clipboard"}
+                        onClick={(e) => copyHistoryEntry(entry, e)}
+                      >
+                        {copiedEntryId === entry.id ? <CheckIcon /> : <CopyIcon />}
+                      </button>
+                      <button
+                        type="button"
+                        className="settings-history-copy-btn settings-history-copy-btn--danger"
+                        aria-label="Remove from history"
+                        onClick={(e) => removeHistoryEntry(entry, e)}
+                      >
+                        <DeleteIcon />
+                      </button>
+                    </div>
                   </div>
                 ))
               )}
@@ -484,6 +530,16 @@ export function Settings() {
               >
                 {copied ? <CheckIcon /> : <CopyIcon />}
               </button>
+              {modalEntry && (
+                <button
+                  type="button"
+                  className="settings-copy-btn settings-copy-btn--danger"
+                  aria-label="Remove from history"
+                  onClick={(e) => removeHistoryEntry(modalEntry, e)}
+                >
+                  <DeleteIcon />
+                </button>
+              )}
               <button
                 type="button"
                 className="settings-close-btn"

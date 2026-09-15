@@ -110,6 +110,8 @@ pub fn run() {
             commands::get_api_key_set,
             commands::get_api_key,
             commands::get_clipboard_history,
+            commands::remove_clipboard_entry,
+            commands::clear_clipboard_history,
             commands::set_api_key,
             commands::clear_api_key,
             commands::test_mic,
