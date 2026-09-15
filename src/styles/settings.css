@@ -341,6 +341,34 @@ body,
   height: 13px;
 }
 
+.settings-history-actions {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex-shrink: 0;
+}
+
+.settings-history-copy-btn--danger:hover,
+.settings-copy-btn--danger:hover {
+  color: #c0392b;
+  border-color: #ead4d0;
+  background: #f8eeec;
+}
+
+.settings-clear-btn {
+  font-size: 11.5px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  background: transparent;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+}
+
+.settings-clear-btn:hover {
+  color: var(--text-primary);
+}
+
 .settings-hotkey-row {
   display: flex;
   align-items: center;

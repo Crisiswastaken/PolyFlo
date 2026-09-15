@@ -100,7 +100,7 @@ GitHub Actions builds Windows and macOS installers and creates a **draft** relea
    - Change it anytime in Settings.
 3. **Speak** — A small overlay shows listening/processing state.
 4. **Release** — Transcript is pasted into the focused field (or copied to clipboard with a notification if paste is unavailable).
-5. **History** — Recent transcripts appear in Settings → Clipboard.
+5. **History** — Recent transcripts appear in Settings → Clipboard. Copy or remove individual entries, or clear the list.
 
 ### API key
 

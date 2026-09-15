@@ -143,6 +143,20 @@ export function CopyIcon({ size = 12.5 }: { size?: number }) {
   );
 }
 
+export function DeleteIcon({ size = 12.5 }: { size?: number }) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" width={size} height={size}>
+      <path
+        d="M5 7h14M10 7V5h4v2M8 7l.8 12h6.4L16 7"
+        stroke="currentColor"
+        strokeWidth="1.8"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  );
+}
+
 export function CheckIcon({ size = 12.5 }: { size?: number }) {
   return (
     <svg viewBox="0 0 24 24" fill="none" width={size} height={size}>
